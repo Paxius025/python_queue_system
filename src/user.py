@@ -122,6 +122,15 @@ class BookingPage(QWidget):
             QMessageBox.warning(self, 'ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบถ้วน')
             return
 
+        # ตรวจสอบความยาวของชื่อและเบอร์โทรศัพท์
+        if len(name) < 5:
+            QMessageBox.warning(self, 'ข้อมูลไม่ถูกต้อง', 'กรุณากรอกชื่อที่มีความยาวอย่างน้อย 5 ตัวอักษร')
+            return
+
+        if len(phone) != 10 or not phone.isdigit():
+            QMessageBox.warning(self, 'ข้อมูลไม่ถูกต้อง', 'กรุณากรอกเบอร์โทรศัพท์ที่มีความยาว 10 ตัวเลข')
+            return
+
         # ตรวจสอบว่าเบอร์โทรศัพท์ซ้ำหรือไม่
         bookings = utils.load_bookings()
         for booking in bookings:
