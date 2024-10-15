@@ -152,9 +152,14 @@ class QueuePage(QWidget):
     def search_queue(self):
         # ฟังก์ชันค้นหาคิวจากเบอร์โทรศัพท์
         phone = self.phone_input.text()
-        bookings = utils.find_booking_by_phone(phone)
-        if bookings:
-            result_text = '\n'.join([f"ชื่อ: {booking['name']}, วันที่: {booking['date']}, เวลา: {booking['time']}, สถานะ: {booking['status']}" for booking in bookings])
+        bookings = utils.load_bookings()
+        filtered_bookings = [booking for booking in bookings if booking['phone'] == phone]
+        if filtered_bookings:
+            result_texts = []
+            for booking in filtered_bookings:
+                queue_number = bookings.index(booking) + 1  # หาเลขคิวโดยใช้ตำแหน่งในรายการ
+                result_texts.append(f"ชื่อ: {booking['name']}, วันที่: {booking['date']}, เวลา: {booking['time']}, สถานะ: {booking['status']}, คิวที่: {queue_number}")
+            result_text = '\n'.join(result_texts)
             self.result_label.setText(result_text)
         else:
             self.result_label.setText('ไม่พบข้อมูลการจองของคุณ')
