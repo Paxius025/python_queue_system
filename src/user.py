@@ -104,7 +104,7 @@ class BookingPage(QWidget):
         name = self.name_input.text()
         date = self.date_combo.currentText()
         time = self.time_combo.currentText()
-        people = self.people_combo.text()
+        people = self.people_combo.currentText()
         phone = self.phone_input.text()
         
         # บันทึกข้อมูลการจองลงในไฟล์ booking_data.json
