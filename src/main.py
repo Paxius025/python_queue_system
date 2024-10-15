@@ -1,7 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel
-from PyQt5.QtWidgets import QStackedWidget
-from user import UserApp
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QStackedWidget
+from user import UserApp, BookingPage, QueuePage
 from employee import EmployeeApp
 
 class MainApp(QWidget):
@@ -47,16 +46,22 @@ class BookingSystemUI(QStackedWidget):
     def initUI(self):
         # สร้างหน้าต่างหลักและ UI ของแต่ละบทบาท
         self.main_app = MainApp(self)
-        self.user_app = UserApp()
+        self.user_app = UserApp(self)
+        self.booking_page = BookingPage(self)
+        self.queue_page = QueuePage(self)
         self.employee_app = EmployeeApp()
 
         # เพิ่มหน้าต่างแต่ละหน้าเข้าไปใน QStackedWidget
         self.addWidget(self.main_app)
         self.addWidget(self.user_app)
+        self.addWidget(self.booking_page)
+        self.addWidget(self.queue_page)
         self.addWidget(self.employee_app)
 
-        # เชื่อมปุ่มย้อนกลับใน UserApp และ EmployeeApp กลับไปยัง MainApp
+        # เชื่อมปุ่มย้อนกลับใน UserApp, BookingPage, QueuePage และ EmployeeApp กลับไปยัง MainApp
         self.user_app.close = self.show_main_app
+        self.booking_page.close = self.show_user_app
+        self.queue_page.close = self.show_user_app
         self.employee_app.close = self.show_main_app
 
         # ตั้งค่าเริ่มต้นให้แสดงหน้าต่างหลัก
@@ -65,6 +70,10 @@ class BookingSystemUI(QStackedWidget):
     def show_main_app(self):
         # แสดงหน้าต่างหลัก
         self.setCurrentWidget(self.main_app)
+
+    def show_user_app(self):
+        # แสดงหน้าต่างหลักของ User
+        self.setCurrentWidget(self.user_app)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

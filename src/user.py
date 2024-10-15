@@ -1,15 +1,59 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QStackedWidget, QLineEdit, QComboBox
 from PyQt5.QtCore import QDate
 import utils
+
 class UserApp(QWidget):
-    def __init__(self):
+    def __init__(self, stacked_widget):
         super().__init__()
+        self.stacked_widget = stacked_widget
         self.initUI()
 
     def initUI(self):
         # ตั้งค่า UI พื้นฐาน
         self.setWindowTitle('Marumthuy Booking System - User')
+        self.setGeometry(100, 100, 400, 300)
+
+        # สร้าง Layout และองค์ประกอบต่างๆ สำหรับหน้าหลักของ User
+        layout = QVBoxLayout()
+
+        label = QLabel('กรุณาเลือกการทำงานที่ต้องการ:')
+        layout.addWidget(label)
+
+        # ปุ่มสำหรับจองคิว
+        book_button = QPushButton('จองคิว')
+        book_button.clicked.connect(self.open_booking_page)
+        layout.addWidget(book_button)
+
+        # ปุ่มสำหรับดูคิว
+        view_queue_button = QPushButton('ดูคิวของคุณ')
+        view_queue_button.clicked.connect(self.open_queue_page)
+        layout.addWidget(view_queue_button)
+
+        # ปุ่มย้อนกลับ
+        back_button = QPushButton('ย้อนกลับ')
+        back_button.clicked.connect(self.stacked_widget.show_main_app)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def open_booking_page(self):
+        # แสดงหน้าจองคิว
+        self.stacked_widget.setCurrentWidget(self.stacked_widget.booking_page)
+
+    def open_queue_page(self):
+        # แสดงหน้าดูคิว
+        self.stacked_widget.setCurrentWidget(self.stacked_widget.queue_page)
+
+class BookingPage(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        self.stacked_widget = stacked_widget
+        self.initUI()
+
+    def initUI(self):
+        # ตั้งค่า UI พื้นฐาน
+        self.setWindowTitle('Marumthuy Booking System - Booking')
         self.setGeometry(100, 100, 400, 300)
 
         # สร้าง Layout และองค์ประกอบต่างๆ สำหรับการจองคิว
@@ -35,7 +79,7 @@ class UserApp(QWidget):
 
         # ช่องกรอกจำนวนคน
         self.people_combo = QComboBox()
-        self.people_combo.addItems(['1', '2', '3', '4', '5', '6'])
+        self.people_combo.addItems(['1', '2', '3', '4', '5', '6', ])
         layout.addWidget(self.people_combo)
 
         # ช่องกรอกเบอร์โทรศัพท์
@@ -50,13 +94,13 @@ class UserApp(QWidget):
 
         # ปุ่มย้อนกลับ
         back_button = QPushButton('ย้อนกลับ')
-        back_button.clicked.connect(self.close)
+        back_button.clicked.connect(self.stacked_widget.show_user_app)
         layout.addWidget(back_button)
 
         self.setLayout(layout)
 
     def submit_booking(self):
-        # ฟังก์ชันสำหรับการส่งข้อมูลการจอง (เตรียมเชื่อมต่อกับ utils.py ในภายหลัง)
+        # ฟังก์ชันสำหรับการส่งข้อมูลการจองไปยังไฟล์ booking_data.json
         name = self.name_input.text()
         date = self.date_combo.currentText()
         time = self.time_combo.currentText()
@@ -66,11 +110,74 @@ class UserApp(QWidget):
         # บันทึกข้อมูลการจองลงในไฟล์ booking_data.json
         utils.add_booking(name, date, time, people, phone)
         
-        # # แสดงข้อมูลที่กรอกใน console (เตรียมบันทึกในไฟล์ booking_data.json)
-        # print(f"Name: {name}, Date: {date}, Time: {time}, People: {people}, Phone: {phone}")
+
+class QueuePage(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        self.stacked_widget = stacked_widget
+        self.initUI()
+
+    def initUI(self):
+        # ตั้งค่า UI พื้นฐาน
+        self.setWindowTitle('Marumthuy Booking System - Queue')
+        self.setGeometry(100, 100, 400, 300)
+
+        # สร้าง Layout และองค์ประกอบต่างๆ สำหรับการดูคิว
+        layout = QVBoxLayout()
+
+        label = QLabel('ดูคิวของคุณ:')
+        layout.addWidget(label)
+
+        # ช่องกรอกเบอร์โทรศัพท์เพื่อค้นหาคิวของตัวเอง
+        self.phone_input = QLineEdit()
+        self.phone_input.setPlaceholderText('กรอกเบอร์โทรศัพท์ของคุณ')
+        layout.addWidget(self.phone_input)
+
+        # ปุ่มค้นหาคิว
+        search_button = QPushButton('ค้นหาคิว')
+        search_button.clicked.connect(self.search_queue)
+        layout.addWidget(search_button)
+
+        # แสดงผลการค้นหา
+        self.result_label = QLabel('')
+        layout.addWidget(self.result_label)
+
+        # ปุ่มย้อนกลับ
+        back_button = QPushButton('ย้อนกลับ')
+        back_button.clicked.connect(self.stacked_widget.show_user_app)
+        layout.addWidget(back_button)
+
+        self.setLayout(layout)
+
+    def search_queue(self):
+        # ฟังก์ชันค้นหาคิวจากเบอร์โทรศัพท์
+        phone = self.phone_input.text()
+        bookings = utils.find_booking_by_phone(phone)
+        if bookings:
+            result_text = '\n'.join([f"ชื่อ: {booking['name']}, วันที่: {booking['date']}, เวลา: {booking['time']}, สถานะ: {booking['status']}" for booking in bookings])
+            self.result_label.setText(result_text)
+        else:
+            self.result_label.setText('ไม่พบข้อมูลการจองของคุณ')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    user_app = UserApp()
-    user_app.show()
+    stacked_widget = QStackedWidget()
+
+    user_app = UserApp(stacked_widget)
+    booking_page = BookingPage(stacked_widget)
+    queue_page = QueuePage(stacked_widget)
+
+    stacked_widget.user_app = user_app
+    stacked_widget.booking_page = booking_page
+    stacked_widget.queue_page = queue_page
+
+    stacked_widget.addWidget(user_app)
+    stacked_widget.addWidget(booking_page)
+    stacked_widget.addWidget(queue_page)
+
+    stacked_widget.setWindowTitle('Marumthuy Booking System')
+    stacked_widget.setGeometry(100, 100, 400, 600)  # ขนาดเท่าหน้าจอโทรศัพท์
+    stacked_widget.setCurrentWidget(user_app)
+    stacked_widget.show()
+
     sys.exit(app.exec_())
