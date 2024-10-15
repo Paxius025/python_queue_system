@@ -1,7 +1,7 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QStackedWidget, QDialog
 from user import UserApp, BookingPage, QueuePage
-from employee import EmployeeApp
+from employee import EmployeeApp, PasswordDialog
 
 class MainApp(QWidget):
     def __init__(self, stacked_widget):
@@ -35,8 +35,10 @@ class MainApp(QWidget):
         self.stacked_widget.setCurrentWidget(self.stacked_widget.user_app)
 
     def open_employee_window(self):
-        # แสดงหน้าต่าง Employee
-        self.stacked_widget.setCurrentWidget(self.stacked_widget.employee_app)
+        # แสดงหน้าต่าง Employee หลังจากตรวจสอบรหัสผ่าน
+        password_dialog = PasswordDialog()
+        if password_dialog.exec_() == QDialog.Accepted:
+            self.stacked_widget.setCurrentWidget(self.stacked_widget.employee_app)
 
 class BookingSystemUI(QStackedWidget):
     def __init__(self):
@@ -49,7 +51,7 @@ class BookingSystemUI(QStackedWidget):
         self.user_app = UserApp(self)
         self.booking_page = BookingPage(self)
         self.queue_page = QueuePage(self)
-        self.employee_app = EmployeeApp()
+        self.employee_app = EmployeeApp(self)
 
         # เพิ่มหน้าต่างแต่ละหน้าเข้าไปใน QStackedWidget
         self.addWidget(self.main_app)
