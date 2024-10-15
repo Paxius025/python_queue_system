@@ -39,10 +39,12 @@ class UserApp(QWidget):
 
     def open_booking_page(self):
         # แสดงหน้าจองคิว
+        self.stacked_widget.booking_page.reset_inputs()
         self.stacked_widget.setCurrentWidget(self.stacked_widget.booking_page)
 
     def open_queue_page(self):
         # แสดงหน้าดูคิว
+        self.stacked_widget.queue_page.reset_inputs()
         self.stacked_widget.setCurrentWidget(self.stacked_widget.queue_page)
 
 class BookingPage(QWidget):
@@ -99,6 +101,14 @@ class BookingPage(QWidget):
 
         self.setLayout(layout)
 
+    def reset_inputs(self):
+        # รีเซตข้อมูลในช่องกรอกข้อมูล
+        self.name_input.clear()
+        self.date_combo.setCurrentIndex(0)
+        self.time_combo.setCurrentIndex(0)
+        self.people_combo.setCurrentIndex(0)
+        self.phone_input.clear()
+
     def submit_booking(self):
         # ฟังก์ชันสำหรับการส่งข้อมูลการจองไปยังไฟล์ booking_data.json
         name = self.name_input.text()
@@ -106,6 +116,11 @@ class BookingPage(QWidget):
         time = self.time_combo.currentText()
         people = self.people_combo.currentText()
         phone = self.phone_input.text()
+
+        # ตรวจสอบว่าช่องกรอกข้อมูลครบถ้วนหรือไม่
+        if not name or not phone:
+            QMessageBox.warning(self, 'ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบถ้วน')
+            return
 
         # ตรวจสอบว่าเบอร์โทรศัพท์ซ้ำหรือไม่
         bookings = utils.load_bookings()
@@ -157,6 +172,11 @@ class QueuePage(QWidget):
         layout.addWidget(back_button)
 
         self.setLayout(layout)
+
+    def reset_inputs(self):
+        # รีเซตข้อมูลในช่องกรอกข้อมูล
+        self.phone_input.clear()
+        self.result_label.setText('')
 
     def search_queue(self):
         # ฟังก์ชันค้นหาคิวจากเบอร์โทรศัพท์
