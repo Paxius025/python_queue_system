@@ -34,9 +34,9 @@ class UserApp(QWidget):
         layout.addWidget(self.time_combo)
 
         # ช่องกรอกจำนวนคน
-        self.people_input = QLineEdit()
-        self.people_input.setPlaceholderText('จำนวนคน')
-        layout.addWidget(self.people_input)
+        self.people_combo = QComboBox()
+        self.people_combo.addItems(['1', '2', '3', '4', '5', '6'])
+        layout.addWidget(self.people_combo)
 
         # ช่องกรอกเบอร์โทรศัพท์
         self.phone_input = QLineEdit()
@@ -60,7 +60,7 @@ class UserApp(QWidget):
         name = self.name_input.text()
         date = self.date_combo.currentText()
         time = self.time_combo.currentText()
-        people = self.people_input.text()
+        people = self.people_combo.text()
         phone = self.phone_input.text()
         
         # บันทึกข้อมูลการจองลงในไฟล์ booking_data.json
