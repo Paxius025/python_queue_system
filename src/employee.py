@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QInputDialog, QLineEdit, QDialog, QFormLayout, QStackedWidget, QMessageBox
+from PyQt5.QtCore import Qt
 import utils
 
 class PasswordDialog(QDialog):
@@ -51,6 +52,8 @@ class EmployeeApp(QWidget):
         self.booking_table.setColumnCount(5)
         self.booking_table.setHorizontalHeaderLabels(['เลขคิว', 'ชื่อ', 'วันที่', 'เวลา', 'สถานะ'])
         self.booking_table.verticalHeader().setVisible(False)
+        self.booking_table.setSelectionBehavior(QTableWidget.SelectRows)  # คลุมสีทั้งแถวเมื่อเลือก
+        self.booking_table.setSelectionMode(QTableWidget.SingleSelection)  # เลือกได้ทีละแถวเท่านั้น
         layout.addWidget(self.booking_table)
 
         # ปุ่มเปลี่ยนสถานะการจอง
