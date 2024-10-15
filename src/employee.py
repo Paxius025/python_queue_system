@@ -1,10 +1,12 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QListWidget, QInputDialog
+import utils
 
 class EmployeeApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.load_bookings_from_json()
 
     def initUI(self):
         # ตั้งค่า UI พื้นฐาน
@@ -34,13 +36,18 @@ class EmployeeApp(QWidget):
         self.setLayout(layout)
 
     def load_bookings(self, bookings):
-        # ฟังก์ชันโหลดข้อมูลการจองลงใน QListWidget (เชื่อมต่อกับ utils.py ในภายหลัง)
+        # ฟังก์ชันโหลดข้อมูลการจองลงใน QListWidget
         self.booking_list.clear()
         for booking in bookings:
             self.booking_list.addItem(f"ชื่อ: {booking['name']}, วันที่: {booking['date']}, เวลา: {booking['time']}")
 
+    def load_bookings_from_json(self):
+        # โหลดข้อมูลการจองจากไฟล์ JSON และแสดงใน QListWidget
+        bookings = utils.load_bookings()
+        self.load_bookings(bookings)
+
     def manage_booking(self):
-        # ฟังก์ชันจัดการการจอง (เชื่อมต่อกับ utils.py ในภายหลัง)
+        # ฟังก์ชันจัดการการจอง
         current_item = self.booking_list.currentItem()
         if current_item:
             options = ["กำลังให้บริการ", "สำเร็จ", "ยกเลิก"]
