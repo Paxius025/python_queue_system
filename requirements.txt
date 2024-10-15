@@ -1,0 +1,8 @@
+attrs==24.2.0
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+PyQt5==5.15.11
+PyQt5-Qt5==5.15.2
+PyQt5_sip==12.15.0
+referencing==0.35.1
+rpds-py==0.20.0
