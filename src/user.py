@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton
 from PyQt5.QtCore import QDate
-
+import utils
 class UserApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -63,8 +63,11 @@ class UserApp(QWidget):
         people = self.people_input.text()
         phone = self.phone_input.text()
         
-        # แสดงข้อมูลที่กรอกใน console (เตรียมบันทึกในไฟล์ booking_data.json)
-        print(f"Name: {name}, Date: {date}, Time: {time}, People: {people}, Phone: {phone}")
+        # บันทึกข้อมูลการจองลงในไฟล์ booking_data.json
+        utils.add_booking(name, date, time, people, phone)
+        
+        # # แสดงข้อมูลที่กรอกใน console (เตรียมบันทึกในไฟล์ booking_data.json)
+        # print(f"Name: {name}, Date: {date}, Time: {time}, People: {people}, Phone: {phone}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
