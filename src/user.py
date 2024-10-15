@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QStackedWidget, QLineEdit, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QStackedWidget, QLineEdit, QComboBox, QMessageBox
 from PyQt5.QtCore import QDate
 import utils
 
@@ -79,7 +79,7 @@ class BookingPage(QWidget):
 
         # ช่องกรอกจำนวนคน
         self.people_combo = QComboBox()
-        self.people_combo.addItems(['1', '2', '3', '4', '5', '6', ])
+        self.people_combo.addItems(['1', '2', '3', '4', '5', '6'])
         layout.addWidget(self.people_combo)
 
         # ช่องกรอกเบอร์โทรศัพท์
@@ -106,10 +106,19 @@ class BookingPage(QWidget):
         time = self.time_combo.currentText()
         people = self.people_combo.currentText()
         phone = self.phone_input.text()
-        
+
+        # ตรวจสอบว่าเบอร์โทรศัพท์ซ้ำหรือไม่
+        bookings = utils.load_bookings()
+        for booking in bookings:
+            if booking['phone'] == phone:
+                QMessageBox.warning(self, 'การจองซ้ำ', 'คุณได้ใช้เบอร์นี้จองไปแล้ว')
+                return
+
         # บันทึกข้อมูลการจองลงในไฟล์ booking_data.json
-        utils.add_booking(name, date, time, people, phone)
-        
+        utils.add_booking(name, date, time, people, phone, status='จองแล้ว')
+
+        # แสดงข้อความยืนยันเมื่อการจองเสร็จสิ้น
+        QMessageBox.information(self, 'สำเร็จ', 'การจองของคุณถูกบันทึกเรียบร้อยแล้ว')
 
 class QueuePage(QWidget):
     def __init__(self, stacked_widget):
@@ -144,7 +153,7 @@ class QueuePage(QWidget):
 
         # ปุ่มย้อนกลับ
         back_button = QPushButton('ย้อนกลับ')
-        back_button.clicked.connect(self.stacked_widget.show_user_app)
+        back_button.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.stacked_widget.user_app))
         layout.addWidget(back_button)
 
         self.setLayout(layout)
