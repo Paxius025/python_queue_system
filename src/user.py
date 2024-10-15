@@ -30,7 +30,7 @@ class UserApp(QWidget):
 
         # เลือกเวลา (ตัวอย่าง dropdown)
         self.time_combo = QComboBox()
-        self.time_combo.addItems(['09:00', '10:00', '11:00', '13:00', '14:00', '15:00'])
+        self.time_combo.addItems(['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'])
         layout.addWidget(self.time_combo)
 
         # ช่องกรอกจำนวนคน
