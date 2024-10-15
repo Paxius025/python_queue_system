@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QInputDialog, QLineEdit, QDialog, QFormLayout, QStackedWidget, QMessageBox
 from PyQt5.QtCore import Qt
 import utils
+import users_data_handler
 
 class PasswordDialog(QDialog):
     def __init__(self):
@@ -93,20 +94,18 @@ class EmployeeApp(QWidget):
         options = ["กำลังให้บริการ", "สำเร็จ", "ยกเลิก"]
         status, ok = QInputDialog.getItem(self, "เปลี่ยนสถานะการจอง", "เลือกสถานะใหม่: ", options, 0, False)
         if ok and status:
-            # อัพเดทสถานะการจองในไฟล์ JSON
+            # อัพเดทสถานะการจองในไฟล์ booking_data.json
             bookings = utils.load_bookings()
             booking = bookings[current_row]
             if status == "กำลังให้บริการ":
                 booking['status'] = status
                 QMessageBox.information(self, 'สถานะการจอง', 'การจองถูกเปลี่ยนสถานะเป็นกำลังให้บริการแล้ว')
-                self.close()
             elif status in ["สำเร็จ", "ยกเลิก"]:
+                # บันทึกสถานะที่ถูกยกเลิกและสำเร็จในไฟล์ users_data.json ก่อนที่จะลบออกจาก booking_data.json
+                users_data_handler.add_user_status(booking['name'], booking['date'], booking['time'], booking['phone'], status)
                 bookings.pop(current_row)
-                utils.save_bookings(bookings)
                 QMessageBox.information(self, 'สถานะการจอง', 'การจองถูกลบออกเรียบร้อยแล้ว')
             utils.save_bookings(bookings)
-            # อัพเดทข้อมูลในไฟล์ users_data.json
-            utils.add_booking(booking['name'], booking['date'], booking['time'], booking['phone'], status)
             self.load_bookings_from_json()
 
     def go_back_to_main(self):
