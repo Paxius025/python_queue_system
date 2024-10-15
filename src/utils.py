@@ -22,7 +22,7 @@ def save_bookings(bookings):
     with open(BOOKING_FILE, 'w', encoding='utf-8') as file:
         json.dump(bookings, file, ensure_ascii=False, indent=4)
 
-def add_booking(name, date, time, people, phone):
+def add_booking(name, date, time, people, phone, status='จองแล้ว'):
     """
     ฟังก์ชันเพิ่มการจองใหม่ลงในไฟล์ JSON
     """
@@ -33,7 +33,7 @@ def add_booking(name, date, time, people, phone):
         'time': time,
         'people': people,
         'phone': phone,
-        'status': 'จองแล้ว'
+        'status': status
     }
     bookings.append(new_booking)
     save_bookings(bookings)
