@@ -14,16 +14,14 @@ Marumthuy_booking_system/
 ├── env/
 ├── requirements.txt
 └── src/
+    ├── employee_app.py # Employee management interface
     ├── main.py
-    ├── utils.py
-    ├── ui.py
-    ├── booking_data.json
-    └── ui/
-        ├── booking_options.py       # UI for choosing booking options (book or check queue)
-        ├── user_page/
-            ├── user_app.py          # User booking interface
-            └── user_queue.py        # User queue status interface
-        └── employee_app.py          # Employee management interface
+    └── ui.py
+    └── user.py  # User booking & queue status interface
+    └── users_data_handler.py        
+    └── utils.py          
+├── booking_data.json
+├── users_data.json
 ```
 
 ## Installation 🛠️
